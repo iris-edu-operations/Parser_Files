@@ -1,0 +1,22 @@
+Orginally Authored bny Forrest Thompson 07/02/2018
+Modified: Tim Ronan 07/10/20192 
+
+Files and scripts are currently/Perminately stored on dms@OPS1:/home/dms/FST_TEST/DATA_EXTRACT_STATS/bin 
+
+Collect data by running            
+./dataextraction-stats.pl - a slightly modified version of /opt/dmc/bin/dataextraction-stats.pl that collects stats from extract.
+
+Clean the data using cat and Awk. This can also be done effectively using R.  
+cat dedata_2018-07-01.txt | grep -v "^Host" | awk -F"," 'BEGIN { OFS="," }; {print $2,$3,$14,$15}' > dedata_SUBSET_2018-07-01.txt
+
+Process data through using 
+./data-extract_daily-summary.pl - takes a subset of those stats and summarizes. It expects a CSV of 4 columns [IP, date yyyy-mm-ddTHH:MM:SSZ, size of file in bytes, UserAgent/Version.]
+
+./data-extract_daily-summary.pl dedata_SUBSET_2018-07-01.txt > dedata_SUBSET_2018-07-01.html 
+
+Data is processed and stats can be run. 
+
+This sorting and formatting base script is very useful and can be adjusted/data can be adjusted to parse files through the script. 
+
+
+
