@@ -1,20 +1,29 @@
-Orginally Authored bny Forrest Thompson 07/02/2018
-Modified: Tim Ronan 07/10/20192 
+Authored by Tim Ronan and Forrest Thompson 07/10/2018
+Modified: Tim Ronan 07/16/20192 
 
 Files and scripts are currently/Perminately stored on dms@OPS1:/home/dms/FST_TEST/DATA_EXTRACT_STATS/bin 
 
 Collect data by running            
-./dataextraction-stats.pl - a slightly modified version of /opt/dmc/bin/dataextraction-stats.pl that collects stats from extract.
+nohup ./dataextraction-stats-2018191.pl -TO > DATA_YYYYJJJ.txt & - a modified version of /opt/dmc/bin/dataextraction-stats.pl that collects stats from extract. This script provides client ip address, method for calling data, data collected, if data was delivered, errors that occured
+
+
+Clean the extra comma out of error data. (NOTE: DO NOT WRITE COMMAS into UNIFORM ERRORS. IT RUINS THE CSV.)
+sed -i.og 's/, please use our streaming service instead\: http\:\/\/ds\.iris\.edu\/ds\/nodes\/dmc\/services\/seedlink\///g' DATA_YYYYJJJ.txt
+
 
 Clean the data using cat and Awk. This can also be done effectively using R.  
-cat dedata_2018-07-01.txt | grep -v "^Host" | awk -F"," 'BEGIN { OFS="," }; {print $2,$3,$14,$15}' > dedata_SUBSET_2018-07-01.txt
+cat DATA_YYYYJJJ.txt | grep -v "^Host" | awk -F"," 'BEGIN { OFS="," }; {print $2,$3,$14,$15,$17,$18}' > DATA_SUBSET_YYYYJJJ.txt
 
-Process data through using 
-./data-extract_daily-summary.pl - takes a subset of those stats and summarizes. It expects a CSV of 4 columns [IP, date yyyy-mm-ddTHH:MM:SSZ, size of file in bytes, UserAgent/Version.]
+TO Clean when looking for swarm results. 
+head -10 swarm_data_2018192.txt | grep -v "^Host" | grep "Swarm" | sed -i 's/, please use our streaming service instead\: http\:\/\/ds\.iris\.edu\/ds\/nodes\/dmc\/services\/seedlink\///g' | awk -F"," 'BEGIN { OFS="," }; {print $2,$3,$14,$15, $17,$18}' > DATA_SUBSET_YYYYJJJ.txt
 
-./data-extract_daily-summary.pl dedata_SUBSET_2018-07-01.txt > dedata_SUBSET_2018-07-01.html 
+Process data using 
+./data-extract_daily-summary_6L.pl - takes a subset of those stats and summarizes. It expects a CSV of 6 
+columns [IP, date yyyy-mm-ddTHH:MM:SSZ, size of file in bytes, UserAgent/Version, Error, Data Requested]
 
-Data is processed and stats can be run. 
+./data-extract_daily-summary_6L.pl DATA_SUBSET_YYYYJJJ.txt > DATA_SUBSET_YYYYJJJ.html 
+
+Data is processed and stats can be viewed. 
 
 This sorting and formatting base script is very useful and can be adjusted/data can be adjusted to parse files through the script. 
 
